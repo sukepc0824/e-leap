@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./reset.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="./data.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+        * {
+            font-family: 'Mulish';
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            padding-top: 60px;
+        }
+
+        p.index {
+            color: rgb(155, 62, 62);
+            font-size: 14px;
+        }
+
+        section .box {
+            top: 2px;
+            left: 4px;
+            gap: 4px;
+            position: absolute;
+            display: flex;
+            align-items: baseline;
+            line-height: 1 !important;
+        }
+
+        section {
+            display: flex;
+            position: relative;
+            border-top: 1px solid #e0b4b4;
+            border-bottom: 1px solid #ffd0d0;
+        }
+
+        section .word {
+            display: flex;
+            align-items: center;
+            width: 173px;
+            flex-shrink: 0;
+            padding-right: 10px;
+            height: 84px;
+            padding-left: 10px;
+            background-color: rgb(255, 231, 231);
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-top: 12px;
+            user-select: none;
+            font-weight: 700;
+        }
+
+        .detail {
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .mean {
+            font-size: 17px;
+        }
+
+        header {
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+            position: fixed;
+            display: flex;
+            background: #f6f6f6;
+            height: 40px;
+            left: 50%;
+            top: 10px;
+            padding: 6px 20px;
+            border-radius: 100px;
+            border: 1px solid #ddd;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        span.jp {
+            font-size: 0.8em;
+        }
+
+        label {
+            user-select: none;
+        }
+
+        strong ,.strong{
+            color: #cd0000;
+            font-weight: 600;
+        }
+        span.highlight {
+            background-color: #777;
+            color: white;
+            font-weight: 400 !important;
+            padding: 2px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <label for="range">範囲:</label>
+            <select id="range">
+                <option value="100">1-100</option>
+                <option value="200">101-200</option>
+                <option value="300">201-300</option>
+                <option value="400">301-400</option>
+                <option value="500">401-500</option>
+                <option value="600">501-600</option>
+                <option value="700">601-700</option>
+            </select>
+        </div>
+        <div>
+            <label for="hide-japanese">日本語:</label>
+            <input type="checkbox" name="" id="hide-japanese" checked>
+        </div>
+        <div>
+            <label for="hide-english">英語:</label>
+            <input type="checkbox" name="" id="hide-english" checked>
+        </div>
+    </header>
+    <main>
+
+    </main>
+    <script>
+        $(function () {
+            $("select").on("change", function () {
+                const value = Number($(this).val());
+                $("section").remove();
+                data.slice(value - 100, value).forEach(element => {
+                    const word = element['単語'];
+                    let meaning = element['語の意味'];
+
+                    let styledWord = word.replace(/([\u3000-\u303F\u3040-\u309F\u30A0-\u30FF()]+)/g, '<span class="jp">$1</span>');
+
+                    meaning = meaning.replace(/\[(.+?)\]/g, '<span class="highlight">$1</span>');
+                    let styledMeaning;
+
+                    if (meaning.includes("①") && meaning.includes("②")) {
+                        styledMeaning = meaning.replace(/①(.*?)②/, (match, p1) => {
+                            const cleaned = p1
+                                .replace(/<span class="highlight">.*?<\/span>/g, ''); // []の中身除去
+                            return `①<strong>${cleaned}</strong>②`;
+                        });
+                    } else {
+                        if (meaning.length <= 3) {
+                            styledMeaning = `<strong>${meaning}</strong>`;
+                        } else {
+                            const before = meaning.slice(0, 3);
+                            let after = meaning;
+
+                            after = after.replace(/\(.*?\)/g, match => match);
+                            after = after.replace(/<span class="highlight">.*?<\/span>/g, match => match);
+                                console.log(after)
+                            styledMeaning = `${before}<div class="strong">${after}</div>`;
+                        }
+                    }
+
+                    const $section = `
+        <section>
+            <div class="box">
+                <input type="checkbox" id="${word}">
+                <p class="index">${element['No.']}</p>
+            </div>
+            <div class="word">
+                <h1>${styledWord}</h1>
+            </div>
+            <div class="detail">
+                <div class="mean">${styledMeaning}</div>
+            </div>
+        </section>`;
+
+                    $($section).appendTo("main");
+                });
+
+
+            })
+
+            $(document).on("click", ".word", function () {
+                $(this).parents("section").find("input.memo").trigger("click")
+            })
+
+            $(document).on("click", "input.memo", function () {
+                let list = []
+                localStorage.setItem("list",)
+            })
+        })
+    </script>
+</body>
+
+</html>
