@@ -210,6 +210,23 @@
                 localStorage.setItem("list",)
             })
         })
+        $(document).ready(function() {
+  $('#hide-japanese').change(function() {
+    if ($(this).is(':checked')) {
+      $('.mean').show();
+    } else {
+      $('.mean').hide();
+    }
+  });
+
+  $('#hide-english').change(function() {
+    if ($(this).is(':checked')) {
+      $('.word').show();
+    } else {
+      $('.word').hide();
+    }
+  });
+});
     </script>
 </body>
 
