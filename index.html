@@ -24,7 +24,7 @@
         }
 
         p.index {
-            color: rgb(155, 62, 62);
+            color: rgb(62, 82, 155);
             font-size: 14px;
         }
 
@@ -41,8 +41,8 @@
         section {
             display: flex;
             position: relative;
-            border-top: 1px solid #e0b4b4;
-            border-bottom: 1px solid #ffd0d0;
+            border-top: 1px solid #b4bee0;
+            border-bottom: 1px solid #b4bee0;
         }
 
         section .word {
@@ -53,7 +53,7 @@
             padding-right: 10px;
             height: 84px;
             padding-left: 10px;
-            background-color: rgb(255, 231, 231);
+            background-color: rgb(196, 221, 247);
         }
 
         h1 {
@@ -93,8 +93,8 @@
             width: fit-content;
         }
 
-        header div{
-            diaplay: flex;
+        header div {
+            diplay: flex;
             gap: 2px;
         }
 
@@ -106,10 +106,12 @@
             user-select: none;
         }
 
-        strong ,.strong{
+        strong,
+        .strong {
             color: #cd0000;
             font-weight: 600;
         }
+
         span.highlight {
             background-color: #777;
             color: white;
@@ -126,22 +128,16 @@
         <div>
             <label for="range">範囲:</label>
             <select id="range">
-                <option value="100">1-100</option>
-                <option value="200">101-200</option>
-                <option value="300">201-300</option>
-                <option value="400">301-400</option>
-                <option value="500">401-500</option>
-                <option value="600">501-600</option>
-                <option value="700">601-700</option>
+                <option value="all" selected>全て</option>
             </select>
         </div>
         <div>
             <label for="hide-japanese">日本語:</label>
-            <input type="checkbox" name="" id="hide-japanese" checked>
+            <input type="checkbox" id="hide-japanese" checked>
         </div>
         <div>
             <label for="hide-english">英語:</label>
-            <input type="checkbox" name="" id="hide-english" checked>
+            <input type="checkbox" id="hide-english" checked>
         </div>
     </header>
     <main>
@@ -149,12 +145,32 @@
     </main>
     <script>
         $(function () {
-            $("select").on("change", function () {
-                const value = Number($(this).val());
-                $("section").remove();
-                data.slice(value - 100, value).forEach(element => {
-                    const word = element['単語'];
-                    let meaning = element['語の意味'];
+            // Populate range dropdown options dynamically based on data length
+            const totalCount = data.length;
+            const $select = $("#range");
+            $select.empty();
+            $select.append('<option value="all" selected>全て</option>');
+
+            for (let i = 0; i < totalCount; i += 100) {
+                const start = i + 1;
+                const end = Math.min(i + 100, totalCount);
+                $select.append(`<option value="${end}">${start}-${end}</option>`);
+            }
+
+            function renderWords() {
+                const val = $select.val();
+                $("main").empty();
+
+                let items = data;
+                if (val !== "all") {
+                    const end = Number(val);
+                    items = data.slice(end - 100, end);
+                }
+
+                items.forEach(element => {
+                    const word = element['単語'] || '';
+                    let meaning = element['意味'] || element['語の意味'] || '';
+                    const no = element['No'] || element['No.'] || '';
 
                     let styledWord = word.replace(/([\u3000-\u303F\u3040-\u309F\u30A0-\u30FF()]+)/g, '<span class="jp">$1</span>');
 
@@ -163,8 +179,7 @@
 
                     if (meaning.includes("①") && meaning.includes("②")) {
                         styledMeaning = meaning.replace(/①(.*?)②/, (match, p1) => {
-                            const cleaned = p1
-                                .replace(/<span class="highlight">.*?<\/span>/g, ''); // []の中身除去
+                            const cleaned = p1.replace(/<span class="highlight">.*?<\/span>/g, '');
                             return `①<strong>${cleaned}</strong>②`;
                         });
                     } else {
@@ -173,10 +188,8 @@
                         } else {
                             const before = meaning.slice(0, 3);
                             let after = meaning;
-
                             after = after.replace(/\(.*?\)/g, match => match);
                             after = after.replace(/<span class="highlight">.*?<\/span>/g, match => match);
-                                console.log(after)
                             styledMeaning = `${before}<div class="strong">${after}</div>`;
                         }
                     }
@@ -184,8 +197,8 @@
                     const $section = `
         <section>
             <div class="box">
-                <input type="checkbox" id="${word}">
-                <p class="index">${element['No.']}</p>
+                <input type="checkbox" class="memo" id="${word}">
+                <p class="index">${no}</p>
             </div>
             <div class="word">
                 <h1>${styledWord}</h1>
@@ -198,35 +211,44 @@
                     $($section).appendTo("main");
                 });
 
+                if (!$('#hide-japanese').is(':checked')) {
+                    $('.mean').hide();
+                } else {
+                    $('.mean').show();
+                }
 
-            })
+                if (!$('#hide-english').is(':checked')) {
+                    $('.word h1').hide();
+                } else {
+                    $('.word h1').show();
+                }
+            }
+
+            $select.on("change", renderWords);
+
+            $('#hide-japanese').on("change", function () {
+                if ($(this).is(':checked')) {
+                    $('.mean').show();
+                } else {
+                    $('.mean').hide();
+                }
+            });
+
+            $('#hide-english').on("change", function () {
+                if ($(this).is(':checked')) {
+                    $('.word h1').show();
+                } else {
+                    $('.word h1').hide();
+                }
+            });
 
             $(document).on("click", ".word", function () {
-                $(this).parents("section").find("input.memo").trigger("click")
-            })
+                $(this).parents("section").find("input.memo").trigger("click");
+            });
 
-            $(document).on("click", "input.memo", function () {
-                let list = []
-                localStorage.setItem("list",)
-            })
-        })
-        $(document).ready(function() {
-  $('#hide-japanese').change(function() {
-    if ($(this).is(':checked')) {
-      $('.mean').show();
-    } else {
-      $('.mean').hide();
-    }
-  });
-
-  $('#hide-english').change(function() {
-    if ($(this).is(':checked')) {
-      $('.word h1').show();
-    } else {
-      $('.word h1').hide();
-    }
-  });
-});
+            // Initial render
+            renderWords();
+        });
     </script>
 </body>
 
