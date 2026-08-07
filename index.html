@@ -65,12 +65,30 @@
 
         .detail {
             display: flex;
-            align-items: center;
-            padding-left: 10px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            padding-left: 14px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            cursor: pointer;
+            flex-grow: 1;
         }
 
         .mean {
             font-size: 17px;
+        }
+
+        .explanation {
+            display: none;
+            font-size: 13px;
+            color: #445;
+            margin-top: 4px;
+            line-height: 1.4;
+            background: #f0f4f8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #3e529b;
         }
 
         header {
@@ -171,27 +189,17 @@
                     const word = element['単語'] || '';
                     let meaning = element['意味'] || element['語の意味'] || '';
                     const no = element['No'] || element['No.'] || '';
+                    const explanation = element['解説'] || '';
 
                     let styledWord = word.replace(/([\u3000-\u303F\u3040-\u309F\u30A0-\u30FF()]+)/g, '<span class="jp">$1</span>');
 
-                    meaning = meaning.replace(/\[(.+?)\]/g, '<span class="highlight">$1</span>');
-                    let styledMeaning;
+                    let styledMeaning = meaning.replace(/\[(.+?)\]/g, '<span class="highlight">$1</span>');
 
-                    if (meaning.includes("①") && meaning.includes("②")) {
-                        styledMeaning = meaning.replace(/①(.*?)②/, (match, p1) => {
+                    if (styledMeaning.includes("①") && styledMeaning.includes("②")) {
+                        styledMeaning = styledMeaning.replace(/①(.*?)②/, (match, p1) => {
                             const cleaned = p1.replace(/<span class="highlight">.*?<\/span>/g, '');
                             return `①<strong>${cleaned}</strong>②`;
                         });
-                    } else {
-                        if (meaning.length <= 3) {
-                            styledMeaning = `<strong>${meaning}</strong>`;
-                        } else {
-                            const before = meaning.slice(0, 3);
-                            let after = meaning;
-                            after = after.replace(/\(.*?\)/g, match => match);
-                            after = after.replace(/<span class="highlight">.*?<\/span>/g, match => match);
-                            styledMeaning = `${before}<div class="strong">${after}</div>`;
-                        }
                     }
 
                     const $section = `
@@ -205,6 +213,7 @@
             </div>
             <div class="detail">
                 <div class="mean">${styledMeaning}</div>
+                ${explanation ? `<div class="explanation">${explanation}</div>` : ''}
             </div>
         </section>`;
 
@@ -244,6 +253,15 @@
 
             $(document).on("click", ".word", function () {
                 $(this).parents("section").find("input.memo").trigger("click");
+            });
+
+            $(document).on("click", ".detail", function () {
+                const $mean = $(this).find(".mean");
+                const $exp = $(this).find(".explanation");
+                if ($exp.length > 0) {
+                    $mean.toggle();
+                    $exp.toggle();
+                }
             });
 
             // Initial render
