@@ -48,10 +48,9 @@
         section .word {
             display: flex;
             align-items: center;
-            width: 153px;
+            width: 156px;
             flex-shrink: 0;
             padding-right: 10px;
-            min-height: 84px;
             padding-left: 10px;
             background-color: rgb(196, 221, 247);
         }
@@ -67,24 +66,23 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            justify-content: center;
+            justify-content: space-between;
             cursor: pointer;
             flex-grow: 1;
         }
 
         .mean {
-            padding-left: 14px;
             font-size: 17px;
-            margin-top: 3px;
+            margin-top: 4px;
+            margin-left: 10px;
         }
 
         .explanation {
-            font-size: 13px;
+            font-size: 12px;
             color: #445;
             line-height: 1.4;
             background: #f0f4f8;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 4px 8px;
         }
 
         header {
@@ -133,6 +131,47 @@
             padding: 2px;
             border-radius: 3px;
             font-size: .8em
+        }
+
+        /* スマホ向けレスポンシブスタイル */
+        @media (max-width: 600px) {
+            main {
+                padding: 10px 4px;
+                padding-top: 54px;
+            }
+
+            header {
+                top: 6px;
+                padding: 4px 12px;
+                font-size: 13px;
+                gap: 6px;
+            }
+
+            section .word {
+                width: 105px;
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+
+            h1 {
+                font-size: 15px;
+                margin-top: 10px;
+            }
+
+            p.index {
+                font-size: 11px;
+            }
+
+            .mean {
+                font-size: 13px;
+                margin-top: 2px;
+                margin-left: 6px;
+            }
+
+            .explanation {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
         }
     </style>
 </head>
@@ -193,9 +232,17 @@
 
                     if (styledMeaning.includes("①") && styledMeaning.includes("②")) {
                         styledMeaning = styledMeaning.replace(/①(.*?)②/, (match, p1) => {
-                            const cleaned = p1.replace(/<span class="highlight">.*?<\/span>/g, '');
-                            return `①<strong>${cleaned}</strong>②`;
+                            return `①<strong>${p1}</strong>②`;
                         });
+                    } else if (!styledMeaning.includes("①")) {
+                        // 「①」がない場合は品詞タグを除いた全体の意味部分を強調表示
+                        if (styledMeaning.includes("]")) {
+                            styledMeaning = styledMeaning.replace(/(\].*)$/, (match, p1) => {
+                                return `]<strong>${p1.slice(1)}</strong>`;
+                            });
+                        } else {
+                            styledMeaning = `<strong>${styledMeaning}</strong>`;
+                        }
                     }
 
                     const $section = `
