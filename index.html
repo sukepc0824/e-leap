@@ -48,10 +48,10 @@
         section .word {
             display: flex;
             align-items: center;
-            width: 173px;
+            width: 153px;
             flex-shrink: 0;
             padding-right: 10px;
-            height: 84px;
+            min-height: 84px;
             padding-left: 10px;
             background-color: rgb(196, 221, 247);
         }
@@ -68,27 +68,23 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            padding-left: 14px;
-            padding-top: 8px;
-            padding-bottom: 8px;
             cursor: pointer;
             flex-grow: 1;
         }
 
         .mean {
+            padding-left: 14px;
             font-size: 17px;
+            margin-top: 3px;
         }
 
         .explanation {
-            display: none;
             font-size: 13px;
             color: #445;
-            margin-top: 4px;
             line-height: 1.4;
             background: #f0f4f8;
             padding: 8px 12px;
             border-radius: 6px;
-            border-left: 3px solid #3e529b;
         }
 
         header {
@@ -144,8 +140,8 @@
 <body>
     <header>
         <div>
-            <label for="range">範囲:</label>
-            <select id="range">
+            <label for="range" style="">表示:</label>
+            <select id="range" style="display: none;">
                 <option value="all" selected>全て</option>
             </select>
         </div>
@@ -205,7 +201,6 @@
                     const $section = `
         <section>
             <div class="box">
-                <input type="checkbox" class="memo" id="${word}">
                 <p class="index">${no}</p>
             </div>
             <div class="word">
@@ -248,19 +243,6 @@
                     $('.word h1').show();
                 } else {
                     $('.word h1').hide();
-                }
-            });
-
-            $(document).on("click", ".word", function () {
-                $(this).parents("section").find("input.memo").trigger("click");
-            });
-
-            $(document).on("click", ".detail", function () {
-                const $mean = $(this).find(".mean");
-                const $exp = $(this).find(".explanation");
-                if ($exp.length > 0) {
-                    $mean.toggle();
-                    $exp.toggle();
                 }
             });
 
