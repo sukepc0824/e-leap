@@ -74,6 +74,7 @@
         .mean {
             font-size: 17px;
             margin-top: 4px;
+            margin-bottom: 4px;
             margin-left: 10px;
         }
 
@@ -106,7 +107,6 @@
         }
 
         header div {
-            diplay: flex;
             gap: 2px;
         }
 
@@ -128,7 +128,7 @@
             background-color: #777;
             color: white;
             font-weight: 400 !important;
-            padding: 2px;
+            padding: 1px;
             border-radius: 3px;
             font-size: .8em
         }
@@ -263,15 +263,15 @@
                 });
 
                 if (!$('#hide-japanese').is(':checked')) {
-                    $('.mean').hide();
+                    $('.mean ,.explanation').hide();
                 } else {
-                    $('.mean').show();
+                    $('.mean ,.explanation').show();
                 }
 
                 if (!$('#hide-english').is(':checked')) {
-                    $('.word h1').hide();
+                    $('.word h1').css('visibility', 'hidden');
                 } else {
-                    $('.word h1').show();
+                    $('.word h1').css('visibility', 'visible');
                 }
             }
 
@@ -279,9 +279,9 @@
 
             $('#hide-japanese').on("change", function () {
                 if ($(this).is(':checked')) {
-                    $('.mean').show();
+                    $('.mean ,.explanation').css('visibility', 'visible');
                 } else {
-                    $('.mean').hide();
+                    $('.mean ,.explanation').css('visibility', 'hidden');
                 }
             });
 
